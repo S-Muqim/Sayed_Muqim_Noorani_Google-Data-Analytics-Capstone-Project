@@ -120,18 +120,454 @@ fwrite(cyclistic_df2,"cyclistic_df2.csv")
 #viewing the final data
 View(cyclistic_df2)
 
-#________________________________________________Analysing the data___________________________________________________
+#________________________________________________ANALYSING THE DATA___________________________________________________
 
------------------Analysing total rides------------------
+#-----------------Analysing total rides------------------
 
 #total number of rides
 nrow(cyclistic_df2)
 
+#-------------Per user type---------------
+
 #grouping user types
 cyclistic_df2 %>% group_by(member_casual) %>% count(member_casual)
+
+#-------------Per bike type---------------
 
 #total rides by user type
 cyclistic_df2 %>% group_by(member_casual, rideable_type) %>% count(rideable_type)
 
 #total number of rides for each type of bike
-cyclistic_df2 %>% group_by(rideable_type) %>% count(rideable_type)
+cyclistic_df2 %>%
+            group_by(rideable_type) %>%
+            count(rideable_type)
+
+#-------------Per bike hour of the day---------------
+
+#number of rides by casual users and members
+cyclistic_df2 %>%
+            group_by(member_casual) %>%
+            count(hour) %>%
+            print(n=48)
+
+#total number of rides per hour
+cyclistic_df2 %>%
+            count(hour) %>%
+            head(n=24)
+
+#-------------Per time of day---------------
+
+#--------Morning----------
+
+#total number of rides by members and casual users in the morning
+cyclistic_df2 %>%
+            group_by(member_casual) %>%
+            filter(time_of_day == "Morning") %>%
+            count(time_of_day)
+
+#total number of rides in the morning
+cyclistic_df2 %>%
+            filter(time_of_day == "Morning") %>%
+            count(time_of_day)
+
+#--------Afternoon----------
+
+#total number of rides by members and casual users in the afternoon
+cyclistic_df2 %>%
+            group_by(member_casual) %>%
+            filter(time_of_day == "Afternoon") %>%
+            count(time_of_day)
+
+#total number of rides in the afternoon
+cyclistic_df2 %>%
+            filter(time_of_day == "Afternoon") %>%
+            count(time_of_day)
+
+#--------Evening----------
+
+#total number of rides by members and casual users in the evening
+cyclistic_df2 %>%
+            group_by(member_casual) %>%
+            filter(time_of_day == "Evening") %>%
+            count(time_of_day)
+
+#total number of rides in the evening
+cyclistic_df2 %>%
+            filter(time_of_day == "Evening") %>%
+            count(time_of_day)
+
+#--------Night----------
+
+#total number of rides by members and casual users at night
+cyclistic_df2 %>%
+            group_by(member_casual) %>%
+            filter(time_of_day == "Night") %>%
+            count(time_of_day)
+
+#total number of rides at night
+cyclistic_df2 %>%
+            filter(time_of_day == "Night") %>%
+            count(time_of_day)
+
+#--------All times of the day----------
+
+#total number of rides by members and casual users at all times of the day
+cyclistic_df2 %>%
+            group_by(member_casual) %>%
+            count(time_of_day)
+
+#-------------Per day of the week---------------
+
+#total number of rides by members and casual users each day of the week
+cyclistic_df2 %>%
+            group_by(member_casual) %>%
+            count(day_of_week)
+
+#total number of rides each day of the week
+cyclistic_df2 %>%
+            count(day_of_week)
+
+#-------------Per day of the month---------------
+
+#total number of rides by members and casual users each day of the month
+cyclistic_df2 %>%
+            group_by(member_casual) %>%
+            count(day) %>%
+            print(n = 62)
+
+#total number of rides each day of the month
+cyclistic_df2 %>%
+            count(day) %>%
+            head(n = 31)
+
+#-------------Per month of the year---------------
+
+#total number of rides by members and casual users each month of the year
+cyclistic_df2 %>%
+            group_by(member_casual) %>%
+            count(month) %>%
+            print(n = 24)
+
+#total number of rides each month of the year
+cyclistic_df2 %>%
+            count(month)
+
+#-------------Per season---------------
+
+#--------Spring----------
+
+#total number of rides by members and casual users in spring
+cyclistic_df2 %>%
+            group_by(member_casual) %>%
+            filter(season == "Spring") %>%
+            count(season)
+
+#total number of rides in spring
+cyclistic_df2 %>%
+            filter(season == "Spring") %>%
+            count(season)
+
+#--------Summer----------
+
+#total number of rides by members and casual users in the summer
+cyclistic_df2 %>%
+            group_by(member_casual) %>%
+            filter(season == "Summer") %>%
+            count(season)
+
+#total number of rides in the summer
+cyclistic_df2 %>%
+            filter(season == "Summer") %>%
+            count(season)
+
+#--------Fall----------
+
+#total number of rides by members and casual users in fall
+cyclistic_df2 %>%
+            group_by(member_casual) %>%
+            filter(season == "Fall") %>%
+            count(season)
+
+#total number of rides in fall
+cyclistic_df2 %>%
+            filter(season == "Fall") %>%
+            count(season)
+
+#--------Winter----------
+
+#total number of rides by members and casual users in winter
+cyclistic_df2 %>%
+            group_by(member_casual) %>%
+            filter(season == "Winter") %>%
+            count(season)
+
+#total number of rides in winter
+cyclistic_df2 %>%
+            filter(season == "Winter") %>%
+            count(season)
+
+#number of rides per season by members and casual users
+cyclistic_df2 %>%
+            group_by(season, member_casual) %>%
+            count(season)
+
+#total number of rides each season
+cyclistic_df2 %>%
+            group_by(season) %>%
+            count(season)
+
+#-----------------Analysing average ride lengths------------------
+
+#total average ride length
+cyclistic_avgRide <- mean(cyclistic_df2 $ ride_length)
+print(cyclistic_avgRide)
+
+#-------------Per user type---------------
+
+#average ride length for members and casual users
+cyclistic_df2 %>%
+            group_by(member_casual) %>%
+            summarise_at(vars(ride_length),
+            list(time = mean))
+
+#-------------Per bike type---------------
+
+#average ride length for each type of bike by members and casual users
+cyclistic_df2 %>%
+            group_by(member_casual, rideable_type) %>%
+            summarise_at(vars(ride_length),
+            list(time = mean))
+
+#total average ride length for each type of bike
+cyclistic_df2 %>%
+            group_by(rideable_type) %>%
+            summarise_at(vars(ride_length),
+            list(time = mean))
+
+#-------------Per hour of the day---------------
+
+#average ride length each hour of the day by members and casual users
+cyclistic_df2 %>%
+            group_by(hour, member_casual) %>%
+            summarise_at(vars(ride_length),
+            list(time = mean)) %>%
+            print(n = 48)
+
+#total average ride length each hour of the day
+cyclistic_df2 %>%
+            group_by(hour) %>%
+            summarise_at(vars(ride_length),
+            list(time = mean)) %>%
+            print(n = 24)
+
+#-------------Per time of the day---------------
+
+#--------Morning----------
+
+#average ride length of members and casual users in the morning
+cyclistic_df2 %>%
+            group_by(member_casual) %>%
+            filter(time_of_day == "Morning") %>%
+            summarise_at(vars(ride_length),
+            list(time = mean))
+
+#total average ride length in the morning
+cyclistic_df2 %>%
+            filter(time_of_day == "Morning") %>%
+            summarise_at(vars(ride_length),
+            list(time = mean))
+
+#--------Afternoon----------
+
+#average ride length of members and casual users in the afternoon
+cyclistic_df2 %>%
+            group_by(member_casual) %>%
+            filter(time_of_day == "Afternoon") %>%
+            summarise_at(vars(ride_length),
+            list(time = mean))
+
+#total average ride length in the afternoon
+cyclistic_df2 %>%
+            filter(time_of_day == "Afternoon") %>%
+            summarise_at(vars(ride_length),
+            list(time = mean))
+
+#--------Evening----------
+
+#average ride length of members and casual users in the evening
+cyclistic_df2 %>%
+            group_by(member_casual) %>%
+            filter(time_of_day == "Evening") %>%
+            summarise_at(vars(ride_length),
+            list(time = mean))
+
+#total average ride length in the evening
+cyclistic_df2 %>%
+            filter(time_of_day == "Evening") %>%
+            summarise_at(vars(ride_length),
+            list(time = mean))
+
+#--------Night----------
+
+#average ride length of members and casual users at night
+cyclistic_df2 %>%
+            group_by(member_casual) %>%
+            filter(time_of_day == "Night") %>%
+            summarise_at(vars(ride_length),
+            list(time = mean))
+
+#total average ride length at night
+cyclistic_df2 %>%
+            filter(time_of_day == "Night") %>%
+            summarise_at(vars(ride_length),
+            list(time = mean))
+
+#total average ride length for each time of the day by members and casual users
+cyclistic_df2 %>%
+            group_by(time_of_day, member_casual) %>%
+            summarise_at(vars(ride_length),
+            list(time = mean))
+
+#total average ride length for each time of the day
+cyclistic_df2 %>%
+            group_by(time_of_day) %>%
+            summarise_at(vars(ride_length),
+            list(time = mean))
+
+#-------------per day of the week---------------
+
+#average ride length of members and casual users each day of the week
+cyclistic_df2 %>%
+            group_by(member_casual, day_of_week) %>%
+            summarise_at(vars(ride_length),
+            list(time = mean))
+
+#total average ride length per day of the week
+cyclistic_df2 %>%
+            group_by(day_of_week) %>%
+            summarise_at(vars(ride_length),
+            list(time = mean))
+
+#-------------per day of the month---------------
+
+#average ride length of members and casual users each day of the month
+cyclistic_df2 %>%
+            group_by(day, member_casual) %>%
+            summarise_at(vars(ride_length),
+            list(time = mean))
+            print(n = 62)
+
+#total average ride length per day of the month
+cyclistic_df2 %>%
+            group_by(day) %>%
+            summarise_at(vars(ride_length),
+            list(time = mean))
+            print(n = 31)
+
+#-------------per month of the year---------------
+
+#average ride length of members and casual users each month of the year
+            group_by(month, member_casual) %>%
+            summarise_at(vars(ride_length),
+            list(time = mean))
+            print(n = 24)
+
+#total average ride length per month of the year
+cyclistic_df2 %>%
+            group_by(month) %>%
+            summarise_at(vars(ride_length),
+            list(time = mean))
+
+#-------------per season---------------
+
+#--------Spring----------
+
+#average ride length of members and casual users in spring
+cyclistic_df2 %>%
+            group_by(member_casual) %>%
+            filter(season == "Spring") %>%
+            summarise_at(vars(ride_length),
+            list(time = mean))
+
+#total average ride length in spring
+cyclistic_df2 %>%
+            filter(season == "Spring") %>%
+            summarise_at(vars(ride_length),
+            list(time = mean))
+
+#--------Summer----------
+
+#average ride length of members and casual users during summer
+cyclistic_df2 %>%
+            group_by(member_casual) %>%
+            filter(season == "Summer") %>%
+            summarise_at(vars(ride_length),
+            list(time = mean))
+
+#total average ride length during summer
+cyclistic_df2 %>%
+            filter(season == "Summer") %>%
+            summarise_at(vars(ride_length),
+            list(time = mean))
+
+#--------Fall----------
+
+#average ride length of members and casual users during fall
+cyclistic_df2 %>%
+            group_by(member_casual) %>%
+            filter(season == "Fall") %>%
+            summarise_at(vars(ride_length),
+            list(time = mean))
+
+#total average ride length in fall
+cyclistic_df2 %>%
+            filter(season == "Fall") %>%
+            summarise_at(vars(ride_length),
+            list(time = mean))
+
+#--------Winter----------
+
+#average ride length of members and casual users during winter
+cyclistic_df2 %>%
+            group_by(member_casual) %>%
+            filter(season == "Winter") %>%
+            summarise_at(vars(ride_length),
+            list(time = mean))
+
+#total average ride length during winter
+cyclistic_df2 %>%
+            filter(season == "Winter") %>%
+            summarise_at(vars(ride_length),
+            list(time = mean))
+
+#total average ride length of members and casual users during each season
+cyclistic_df2 %>%
+            group_by(season, member_casual) %>%
+            summarise_at(vars(ride_length),
+            list(time = mean))
+
+#total ride length per season
+cyclistic_df2 %>%
+            group_by(season) %>%
+            summarise_at(vars(ride_length),
+            list(time = mean))
+
+#-----------------Analysing most popular start stations------------------
+
+#most popular start station for casual users
+cyclistic_df2 %>%
+            group_by(member_casual, start_station_name) %>%
+            dplyr::summarise(number_of_ride = n()) %>%
+            filter(start_station_name != "", "casual" == member_casual) %>%
+            arrange(-number_of_ride) %>%
+            head(n = 30) %>%
+            select(-member_casual)
+
+#most popular start station for members
+cyclistic_df2 %>%
+            group_by(member_casual, start_station_name) %>%
+            dplyr::summarise(number_of_ride = n()) %>%
+            filter(start_station_name != "", "member" == member_casual) %>%
+            arrange(-number_of_ride) %>%
+            head(n = 30) %>%
+            select(-member_casual)
