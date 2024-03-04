@@ -1,0 +1,137 @@
+#_____________________________________________Using R for analysis________________________________________
+
+#installing packages
+install.packages("tidyverse")
+
+#loading libraries 
+library(tidyverse) #calculations
+library(lubridate) #dates 
+library(hms) #time
+library(data.table) #exporting data frame
+library(dplyr)
+library(plyr) #splitting, applying, combining data
+library(ggplot2) #creating visualisations
+
+#setting the working directory
+setwd("~/R/Cyclistic Capstone Project")
+
+#loading the full year of original .csv files from January 2023 to December 2023#
+
+jan2023_data <- read.csv("202301-divvy-tripdata.csv")
+feb2023_data <- read.csv("202302-divvy-tripdata.csv")
+mar2023_data <- read.csv("202303-divvy-tripdata.csv")
+apr2023_data <- read.csv("202304-divvy-tripdata.csv")
+may2023_data <- read.csv("202305-divvy-tripdata.csv")
+jun2023_data <- read.csv("202306-divvy-tripdata.csv")
+jul2023_data <- read.csv("202307-divvy-tripdata.csv")
+aug2023_data <- read.csv("202308-divvy-tripdata.csv")
+sep2023_data <- read.csv("202309-divvy-tripdata.csv")
+oct2023_data <- read.csv("202310-divvy-tripdata.csv")
+nov2023_data <- read.csv("202311-divvy-tripdata.csv")
+dec2023_data <- read.csv("202312-divvy-tripdata.csv")
+
+#merging all files into one, to get a full year view
+cyclistic_df <- rbind(jan2023_data, feb2023_data, mar2023_data, apr2023_data, may2023_data, jun2023_data, jul2023_data, aug2023_data, sep2023_data, oct2023_data, nov2023_data, dec2023_data)
+
+#removing the data frames for each individual month in order to free up space in the environment
+remove(jan2023_data, feb2023_data, mar2023_data, apr2023_data, may2023_data, jun2023_data, jul2023_data, aug2023_data, sep2023_data, oct2023_data, nov2023_data, dec2023_data)
+
+#using lubridate to specify the date/time format of the started_at and ended_at columns
+cyclistic_df2$started_at <- lubridate::ymd_hms(cyclistic_df2$started_at)
+cyclistic_df2$ended_at <- lubridate::ymd_hms(cyclistic_df2$ended_at)
+
+#adding column for Ride_Length by subtracting ended_at time from started_at time and converting it from seconds to minutes
+cyclistic_df$ride_length <- difftime(cyclistic_df$ended_at, cyclistic_df$started_at, units = "mins")
+
+#created a copy of the cyclistic data frame, in case a mistake is made
+cyclistic_df2 <- cyclistic_df
+
+#adding column for the day of the week
+cyclistic_df2$day_of_week <- wday(cyclistic_df2$started_at)
+
+#creating columns for: month, day, year, time, hour
+cyclistic_df2$day_of_week <- wday(cyclistic_df2$started_at) #calculating the day of the week
+
+cyclistic_df2$day_of_week <- format(as.Date(cyclistic_df2$date), "%A") #create column for day of week
+cyclistic_df2$date <- as.Date(cyclistic_df2$started_at) #default format is yyyy-mm-dd, using start date
+cyclistic_df2$month <- format(as.Date(cyclistic_df2$date), "%m") #creating column for month
+cyclistic_df2$day <- format(as.Date(cyclistic_df2$date), "%d") #creating column for day
+cyclistic_df2$year <- format(as.Date(cyclistic_df2$date), "%Y") #creating column for year
+cyclistic_df2$time <- format(as.Date(cyclistic_df2$date), "%H:%M:%S") #format time as HH:MM:SS
+cyclistic_df2$time <- as_hms((cyclistic_df2$started_at)) #creating new column for time
+cyclistic_df2$hour <- hour(cyclistic_df2$time) #creating new column for hour
+
+#for further analysis, creating columns for different seasons: Spring, Summer, Fall, Winter
+            cyclistic_df2 <-cyclistic_df2 %>% mutate(season =
+            case_when(month == "03" ~ "Spring",
+            month == "04" ~ "Spring",
+            month == "05" ~ "Spring",
+            month == "06"  ~ "Summer",
+            month == "07"  ~ "Summer",
+            month == "08"  ~ "Summer",
+            month == "09" ~ "Fall",
+            month == "10" ~ "Fall",
+            month == "11" ~ "Fall",
+            month == "12" ~ "Winter",
+            month == "01" ~ "Winter",
+            month == "02" ~ "Winter")
+            )
+
+
+#creating column for different time_of_day: Night, Morning, Afternoon, Evening
+            cyclistic_df2 <-cyclistic_df2 %>% mutate(time_of_day =
+            case_when(hour == "0" ~ "Night",
+            hour == "1" ~ "Night",
+            hour == "2" ~ "Night",
+            hour == "3" ~ "Night",
+            hour == "4" ~ "Night",
+            hour == "5" ~ "Night",
+            hour == "6" ~ "Morning",
+            hour == "7" ~ "Morning",
+            hour == "8" ~ "Morning",
+            hour == "9" ~ "Morning",
+            hour == "10" ~ "Morning",
+            hour == "11" ~ "Morning",
+            hour == "12" ~ "Afternoon",
+            hour == "13" ~ "Afternoon",
+            hour == "14" ~ "Afternoon",
+            hour == "15" ~ "Afternoon",
+            hour == "16" ~ "Afternoon",
+            hour == "17" ~ "Afternoon",
+            hour == "18" ~ "Evening",
+            hour == "19" ~ "Evening",
+            hour == "20" ~ "Evening",
+            hour == "21" ~ "Evening",
+            hour == "22" ~ "Evening",
+            hour == "23" ~ "Evening")
+            )
+
+#________________________________________________Cleaning the data___________________________________________________
+
+cyclistic_df2 <- na.omit(cyclistic_df2) #removing rows with NA values
+cyclistic_df2 <- distinct(cyclistic_df2) #removing duplicate rows
+cyclistic_df2 <- cyclistic_df2[!(cyclistic_df2$ride_length <=1.9),] #deleting rides that lasted less than 2 minutes
+cyclistic_df2 <- cyclistic_df2 %>% select(-c(ride_id, start_station_id, end_station_id,start_lat,start_lng,end_lat,end_lng)) #removing columns that aren't needed for analysis
+cyclistic_df2$ride_length <- round(cyclistic_df2$ride_length, digits = 1) #rounding the ride length in minutes to 1 decimal place
+
+#downloading the data as a .csv file
+fwrite(cyclistic_df2,"cyclistic_df2.csv")
+
+#viewing the final data
+View(cyclistic_df2)
+
+#________________________________________________Analysing the data___________________________________________________
+
+-----------------Analysing total rides------------------
+
+#total number of rides
+nrow(cyclistic_df2)
+
+#grouping user types
+cyclistic_df2 %>% group_by(member_casual) %>% count(member_casual)
+
+#total rides by user type
+cyclistic_df2 %>% group_by(member_casual, rideable_type) %>% count(rideable_type)
+
+#total number of rides for each type of bike
+cyclistic_df2 %>% group_by(rideable_type) %>% count(rideable_type)
