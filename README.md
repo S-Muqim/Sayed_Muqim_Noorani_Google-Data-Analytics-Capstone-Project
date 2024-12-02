@@ -1,1 +1,1 @@
-# Sayed Muqim Noorani Google-Data-Analytics-Capstone-Project
+# Analysis of Cyclistic customer behaviour (member vs casual riders)
